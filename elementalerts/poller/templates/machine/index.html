@@ -1,0 +1,49 @@
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">    
+</head>
+<body>
+{% if machine_list %}
+    <p>Machines</p>
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <th>Machine UUID</th>
+                <th>Last sample</th>
+                <th>Last temp</th>
+            </tr>
+        </thead>
+    {% for machine in machine_list %}
+        <tr>
+            <td>{{machine.machine_uuid}}</td>
+            <td >{{machine.last_sample_date}}</td>
+            <td align="right">{{machine.last_sample_temp}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No machines are configured</p>
+{% endif %}
+{% if alert_list %}
+    <p>Alerts</p>
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <th>Machine UUID</th>
+                <th>Alert time</th>
+                <th>Alert Type</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+    {% for alert in alert_list %}
+        <tr>
+            <td>{{alert.machine.machine_uuid}}</td>
+            <td>{{alert.alert_date | date:'Y-m-d H:i:s' }}</td>
+            <td>{{alert.alert_type}}</td>
+            <td>{{alert.message}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No alerts</p>
+{% endif %}
+</body>
