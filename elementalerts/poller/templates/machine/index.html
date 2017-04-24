@@ -1,14 +1,21 @@
 <head>
     <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">    
+    <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/base-min.css">
+    <style type="text/css">
+        .content { margin-left:3em;}
+    </style>
 </head>
 <body>
+
+<div class="content">
+    <p>&nbsp;</p>
+    <p><h2>Machine State</h2></p>
 {% if machine_list %}
-    <p>Machines</p>
-    <table class="pure-table">
+    <table class="pure-table pure-table-striped">
         <thead>
             <tr>
                 <th>Machine UUID</th>
-                <th>Last sample</th>
+                <th>Last sample (UTC)</th>
                 <th>Last temp</th>
             </tr>
         </thead>
@@ -23,13 +30,13 @@
 {% else %}
     <p>No machines are configured</p>
 {% endif %}
+<p><h2>Alert History</h2></p>
 {% if alert_list %}
-    <p>Alerts</p>
-    <table class="pure-table">
+    <table class="pure-table pure-table-striped">
         <thead>
             <tr>
                 <th>Machine UUID</th>
-                <th>Alert time</th>
+                <th>Alert time (UTC)</th>
                 <th>Alert Type</th>
                 <th>Message</th>
             </tr>
@@ -46,4 +53,5 @@
 {% else %}
     <p>No alerts</p>
 {% endif %}
+</div>
 </body>

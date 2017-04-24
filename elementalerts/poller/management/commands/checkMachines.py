@@ -1,10 +1,10 @@
 from django.core.management.base import BaseCommand
 from ...models import Machine, Alert
-from ...api.elemental_api import get_machine_alert_settings, get_machine_samples, get_machine_details
+from ...api.elemental_api import get_machine_alert_settings, get_machine_samples, get_user, get_machine_details
 from ...api.twilio_api import make_voice_call
 import logging
 from decimal import *
-import datetime
+from django.utils import timezone
 
 HIGH_LIMIT  = 'high_limit'
 LOW_LIMIT = 'low_limit'
@@ -44,27 +44,31 @@ def check_sample(temp, alert_settings):
     return ret
 
 
-def raise_alert(machine, last_sample_temp, current_temp, alert_settings):
-    alert_type = check_sample(current_temp, alert_settings)
+def raise_alert(machine, current_state, current_temp, alert_settings):
     machine_details = get_machine_details(machine.machine_uuid)
-    if alert_type == Alert.ALERT_TYPE_TEMP_GOOD:
+    user_info = get_user()
+    
+    if current_state == Alert.ALERT_TYPE_TEMP_GOOD:
         alert_message = "This message is from Elemental Machines. The temperature of device %s at %s is back in acceptable range. The current temperature is %s degrees celcius." % \
                         (machine_details["name"], machine_details["location"], current_temp)
-    else: 
-        alert_message = "This message is from Elemental Machines. The temperature of device %s at %s has fallen outside of the acceptable range. The current temperature is %s degrees celcius." % \
+    elif current_state == Alert.ALERT_TYPE_TEMP_LOW: 
+        alert_message = "This message is from Elemental Machines. The temperature of device %s at %s has fallen below the acceptable range. The current temperature is %s degrees celcius." % \
+                        (machine_details["name"], machine_details["location"], current_temp)
+    elif current_state == Alert.ALERT_TYPE_TEMP_HIGH: 
+        alert_message = "This message is from Elemental Machines. The temperature of device %s at %s has gone above the acceptable range. The current temperature is %s degrees celcius." % \
                         (machine_details["name"], machine_details["location"], current_temp)
     
-    logger.info(alert_message)
+    logger.info("Message sent to user on %s: %s" % (user_info['mobile'],alert_message))
     
     """ Take appropriate action if machine state has changed """
     alert = Alert(
         machine=machine,
-        alert_date=datetime.datetime.now(),
-        alert_type=alert_type,
+        alert_date= timezone.now(),
+        alert_type=current_state,
         message=alert_message
         )
     alert.save()
-    make_voice_call(alert)
+    make_voice_call(user_info, alert)
 
 
 def check_machine(machine):
@@ -90,14 +94,14 @@ def check_machine(machine):
     last_sample_temp = machine.last_sample_temp 
     last_state = check_sample(last_sample_temp, alert_settings)
 
-    machine_samples = get_machine_samples(machine.machine_uuid,last_sample_epoch )
+    machine_samples = get_machine_samples(machine.machine_uuid,last_sample_epoch + 1 )
     for sample in machine_samples:
         current_temp = Decimal(sample[TEMP_VARIABLE])
         current_state = check_sample(current_temp, alert_settings)
 
         # Is we have gone out of range (or back in) create an alert
         if current_state != last_state and last_state:
-            raise_alert(machine, last_sample_temp, current_temp, alert_settings)
+            raise_alert(machine, current_state, current_temp, alert_settings)
         last_sample_epoch = sample['sample_epoch']
         last_sample_temp = current_temp
         last_state = current_state

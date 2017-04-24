@@ -11,11 +11,8 @@ _access_token = settings.ACCESS_TOKEN
 slumber = slumber.API(_url)
 
 def get_user():
-    """ 
-    :return:                                                                                                T
-    """
-    users = slumber.api("users.json").get(access_token=_access_token)
-    logger.debug(users)
+    user = slumber.api.users("my.json").get(access_token=_access_token)
+    return user
 
 def get_machine_list():
     return slumber.api("machines.json").get(access_token=_access_token)
@@ -30,6 +27,6 @@ def get_machine_samples(machine_uuid,last_sample_epoch=None):
     if not last_sample_epoch:
         last_sample_epoch = int(round(time.time())) - 60
     url_string=machine_uuid + '/samples.json'
-    params = {'access_token':_access_token,'from':last_sample_epoch}
+    params = {'access_token':_access_token,'from':last_sample_epoch, 'limit':1000}
     return slumber.api.machines(url_string).get(**params)
     
