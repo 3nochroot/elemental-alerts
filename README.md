@@ -2,7 +2,7 @@
 Alerting service based on Elemental Machines API
 
 ## Design
-The app is built in the Django MVC framework. It needs a vanilla install of python 2.7 with the following imports: Django (version 1.11), twilio, and slumber (for calls to api.elementalmachines.io). The persistence layer is a SQLite db which is stored in a local file.
+The app is built in the Django MVC framework. It needs a vanilla install of python 2.7 with the following imports: Django (version 1.11), twilio, and slumber (for calls to api.elementalmachines.io). The persistence layer is a SQLite db which is stored in a local file. 
 
 The app has a command called checkMachines which is called periodically from a crontab. That command iterates through all known machines and does the following:
 * Get the machine alert settings (valid temperature range)
@@ -16,6 +16,9 @@ There is one python module for calls to api.elementalmachines.io (using the Slum
 The app has a single template, which shows the state of each machine along with a list of the last 20 alerts fired. This is available on [http://ec2-54-208-233-56.compute-1.amazonaws.com:8000/poller/].
 
 Additionally, the Django built in Admin templates (which are scaffolded by the framework) can be used to view/edit/delete all Machine and Alert objects persisted in the local SQLite database: [http://ec2-54-208-233-56.compute-1.amazonaws.com:8000/admin/poller/] (credentials are admin/admin123)
+
+### Design Choices
+Django was chosen because of its familiarity and its suitability for rapid prototyping. That said, and MVC framework with scaffolding would have been a decent choice (Grails, Ruby on Rails, etc). SQLite was chosen because it's lightweight.
 
 ## Next steps
 Additional clean-up time on this code base should be spend on the following tasks:
