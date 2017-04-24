@@ -12,7 +12,7 @@ twilio_client = Client(account_sid, auth_token)
 
 
 def convert_to_e164(phone_number_string):
-    phone_number_string = "617-694-2008"
+    #phone_number_string = "617-694-2008" # Hard code my own phone number
     digits =  re.sub('[^0-9]+', '', phone_number_string)
     if digits.__len__() == 10:
         digits = "+1" + digits
@@ -36,5 +36,6 @@ def make_voice_call(user_info, alert):
     call = twilio_client.calls.create(
         url=echo_url,
         to=phone_number,   #message from user
-        from_=settings.TWILIO_NUMBER)
+        from_=settings.TWILIO_NUMBER,
+        machine_detection="DetectMessageEnd")
     logger.info("Twilio call from %s to %s, sid=%s"  % (settings.TWILIO_NUMBER,phone_number, call.sid))
