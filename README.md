@@ -21,8 +21,10 @@ Additionally, the Django built in Admin templates (which are scaffolded by the f
 Django was chosen because of its familiarity and its suitability for rapid prototyping. That said, and MVC framework with scaffolding would have been a decent choice (Grails, Ruby on Rails, etc). SQLite was chosen because it's lightweight.
 
 ## Next steps
-Additional clean-up time on this code base should be spend on the following tasks:
+Additional clean-up time on this code base should be used to complete the following tasks:
 * Write some tests for it with static input data (by mocking out the api.elementalmachines.io calls)
 * Add code to check for pre-conditions/post-conditions (i.e. check that user has an attribute for 'mobile', alert settings is not null for a given machine, etc)
 * Move sensitive settings (passwords, API keys) from settings.py file in the git repo to environment variables
 * Add docstrings to each function in the python packages
+* Add more audit columns on the alert table to track the epoch time of the event which caused the alert (independent of the time the alert was recorded). 
+* Add timestamps to logging messages
