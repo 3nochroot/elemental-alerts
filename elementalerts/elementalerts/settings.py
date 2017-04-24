@@ -117,7 +117,7 @@ USE_L10N = True
 USE_TZ = True
 
 ELEMENTAL_MACHINES_URL = "https://api.elementalmachines.io"
-ACCESS_TOKEN = "7eb3d0a32f2ba1e8039657ef2bd1913d95707ff53e37dfd0344ac62ded3df033"
+ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
