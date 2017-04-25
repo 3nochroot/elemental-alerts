@@ -31,11 +31,15 @@ def make_voice_call(user_info, alert):
     # The echo endpoint allows us to generate a URL with our message text without actually serving the page from our app
     echo_url = 'http://twimlets.com/echo?Twiml=' + \
                urllib.quote('<Response><Say>' + alert.message  + '</Say></Response>')
-    
-    # Use Twilio client to make a voice call    
-    call = twilio_client.calls.create(
-        url=echo_url,
-        to=phone_number,   #message from user
-        from_=settings.TWILIO_NUMBER,
-        machine_detection="DetectMessageEnd")
-    logger.info("Twilio call from %s to %s, sid=%s"  % (settings.TWILIO_NUMBER,phone_number, call.sid))
+
+    try:    
+        # Use Twilio client to make a voice call    
+        call = twilio_client.calls.create(
+            url=echo_url,
+            to=phone_number,   #message from user
+            from_=settings.TWILIO_NUMBER,
+            machine_detection="DetectMessageEnd")
+        logger.info("Twilio call from %s to %s, sid=%s"  % (settings.TWILIO_NUMBER,phone_number, call.sid))
+    except Exception as  e:
+        logger.info("Twilio call failed: %s"  % (e))
+            
